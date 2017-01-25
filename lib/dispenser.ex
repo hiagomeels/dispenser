@@ -11,27 +11,12 @@ defmodule Dispenser do
     @type t :: %__MODULE__{name: String.t, value: list(list), attributes: list(list)}
   end
 
-  EEx.function_from_file(:def, :generate_xml, Path.expand("./lib/templates/template.xml.eex"), [:soap_request])
-  EEx.function_from_file(:def, :generate_item_without_attr, Path.expand("./lib/templates/values.xml.eex"), [:values])
-  EEx.function_from_file(:def, :generate_item_with_attr, Path.expand("./lib/templates/values_with_attrs.xml.eex"), [:item])
+  EEx.function_from_file(:def, :generate_xml, Path.expand("./templates/template.xml.eex"), [:soap_request])
+  EEx.function_from_file(:def, :generate_item_without_attr, Path.expand("./templates/values.xml.eex"), [:values])
+  EEx.function_from_file(:def, :generate_item_with_attr, Path.expand("./templates/values_with_attrs.xml.eex"), [:item])
 
-  def generate_item(%Dispenser.Item{} = item) do
-    %Dispenser.Item{
-      name: item.name,
-      value: Enum.map(item.value, &(to_list(&1))),
-      attributes: Enum.map(item.attributes, &(to_list(&1)))
-    }
-    |> generate_item_with_attr()
-  end
-
-  def generate_item(item) do
-    item
-    |> Enum.map(&(to_list(&1)))
-    |> generate_item_without_attr()
-  end
-
-  def to_list(value) when Kernel.is_tuple(value), do: Tuple.to_list(value)
-  def to_list(value), do: value
+  def generate_item(%Dispenser.Item{} = item), do: generate_item_with_attr(item)
+  def generate_item(item), do: generate_item_without_attr(item)
 
   def get_value(%Dispenser.Item{} = value), do: generate_item(value)
   def get_value(value) when Kernel.is_list(value), do: generate_item_without_attr(value)
