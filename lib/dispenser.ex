@@ -23,12 +23,14 @@ defmodule Dispenser do
   def get_value(value), do: value
 
   def do_request(%Dispenser.Request{} = request) do
-      request_header = get_headers(request)
       request_body = generate_xml(request)
+      request_header = get_headers(request)
       res = HTTPoison.post!(request.uri, request_body, request_header, [recv_timeout: 10000])
       case(res) do
         %HTTPoison.Response{status_code: 200, body: res_body} ->
           {:ok, res_body}
+        %HTTPoison.Response{status_code: status_code} ->
+          {:error, %{status_code: status_code}}
       end
   end
 
