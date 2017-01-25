@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<SOAP-ENV:Envelope
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+<%= if soap_request.header_params != nil do %>
+  <SOAP-ENV:Header>
+    <%= Dispenser.generate_item(soap_request.header_params) %>
+  </SOAP-ENV:Header>
+<% end %>
+  <SOAP-ENV:Body>
+    <u:<%= soap_request.method %>
+       xmlns:u="<%= soap_request.namespace %>">
+       <%= Dispenser.generate_item(soap_request.params) %>
+    </u:<%= soap_request.method %>>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
