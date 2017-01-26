@@ -1,6 +1,6 @@
 <urn:<%= item.name %>
   <%= for {name, value} <- item.attributes do %>
-    <%= name %>="urn:<%= value %>"
+    <%= name %>="<%= value %>"
   <% end %>>
   <%= Dispenser.get_value(item.value) %>
 </urn:<%= item.name %>>
