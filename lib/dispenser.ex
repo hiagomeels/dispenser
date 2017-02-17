@@ -1,5 +1,6 @@
 defmodule Dispenser do
   require EEx
+  @timeout 15000
 
   defmodule Request do
     defstruct  uri: nil, method: nil , namespace: nil, header_params: nil, params: []
@@ -23,18 +24,31 @@ defmodule Dispenser do
   def get_value(value), do: value
 
   def do_request(%Dispenser.Request{} = request) do
-      request_body = generate_xml(request)
       request_header = get_headers(request)
-      res = HTTPoison.post!(request.uri, request_body, request_header, [recv_timeout: 10000])
-      case(res) do
-        %HTTPoison.Response{status_code: 200, body: res_body} ->
+      request
+      |> generate_xml
+      |> do_request(request, request_header)
+
+  end
+
+  def do_request(request_body, %Dispenser.Request{} = request, request_header) do
+      case HTTPoison.post(request.uri, request_body, request_header, [recv_timeout: @timeout]) do
+        {:ok, %HTTPoison.Response{status_code: 200, body: res_body}} ->
           {:ok, res_body}
-        %HTTPoison.Response{status_code: status_code} ->
-          {:error, %{status_code: status_code}}
+        {:ok, %HTTPoison.Response{status_code: status_code}} ->
+          {:error, status_code}
+        {:error, %HTTPoison.Error{reason: reason}} ->
+          {:error, reason}
       end
   end
 
-  defp get_headers(%Dispenser.Request{} = request) do
+  def get_body(%Dispenser.Request{} = request) do
+    request
+    |> generate_xml
+    |> String.replace "\n", ""
+  end
+
+  def get_headers(%Dispenser.Request{} = request) do
     [{"Content-Type", "text/xml"}, {"SOAPACTION", "urn:#{request.namespace}##{request.method}"}]
   end
 end
