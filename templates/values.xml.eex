@@ -1,3 +1,8 @@
-<%= for {name, value} <- values do %>
-  <<%= name %>><%= Dispenser.get_value(value) %></<%= name %>>
+<%= for item <- values do %>
+  <%= if is_tuple(item) do %>
+    <% {name, value} = item %>
+    <<%= name %>><%= Dispenser.get_value(value) %></<%= name %>>
+  <% else %>
+    <%= item |> IO.inspect |> Dispenser.get_value %>
+  <% end %>  
 <% end %>
