@@ -1,6 +1,7 @@
 defmodule Dispenser do
   require EEx
-  @timeout 15000
+  
+  @timeout Application.get_env(:dispenser, :timeout, 15_000)
 
   defmodule Request do
     defstruct  uri: nil, method: nil , namespace: nil, header_params: nil, params: []
