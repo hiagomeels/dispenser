@@ -24,6 +24,6 @@ defmodule Dispenser.Mixfile do
   end
 
   defp deps do
-    [{:httpoison, "~> 1.2.0"}]
+    [{:httpoison, "~> 1.6.2"}]
   end
 end
