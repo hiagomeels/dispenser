@@ -3,6 +3,6 @@
     <% {name, value} = item %>
     <<%= name %>><%= Dispenser.get_value(value) %></<%= name %>>
   <% else %>
-    <%= item |> IO.inspect |> Dispenser.get_value %>
+    <%= Dispenser.get_value(item) %>
   <% end %>  
 <% end %>
